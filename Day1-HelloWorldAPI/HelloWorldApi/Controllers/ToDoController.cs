@@ -20,10 +20,12 @@ namespace HelloWorldApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ToDo>> RetrieveTodos()
+        public async Task<ActionResult<List<ToDo>>> RetrieveTodos()
         {
-            return _toDoService.RetrieveAll();
+            var todos = await _toDoService.RetrieveAll();
+            return Ok(todos);
         }
+
 
         [HttpPut("id")]
         public IActionResult UpdateTodo(int id, ToDo toDo)

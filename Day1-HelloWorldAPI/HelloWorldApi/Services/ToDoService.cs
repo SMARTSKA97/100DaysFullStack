@@ -1,38 +1,53 @@
 ﻿using HelloWorldApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HelloWorldApi.Services
 {
     public class ToDoService
     {
+        private readonly AppDbContext _db;
+
         //Initialize
-        private static List<ToDo> _toDos = new List<ToDo>();
+        public ToDoService(AppDbContext db) => _db = db;
         
         //C of CRUD
-        public void Create(ToDo toDo)
+        public async Task Create(ToDo toDo)
         {
-            toDo.Id = _toDos.Count + 1;
-            _toDos.Add(toDo);
+            _db.ToDo.Add(toDo);
+            await _db.SaveChangesAsync();
         }
 
         //R of CRUD
         //This will retrieve all ToDos
-        public List<ToDo> RetrieveAll() => _toDos;
+        public async Task<List<ToDo>>RetrieveAll() => await _db.ToDo.ToListAsync();
 
         //This will retrieve by ID
-        public ToDo? RetrieveById(int id) => _toDos.FirstOrDefault(t => t.Id == id);
+       public async Task<ToDo?> RetrieveByIdAsync(int id) => await _db.ToDo.FindAsync(id);
 
         //U of CRUD
-        public void Update(int  id, ToDo toDo)
+        public async Task<bool> Update(int  id, ToDo toDo)
         {
-            int index = _toDos.FindIndex(t => t.Id == toDo.Id);
-            if(index == -1)
-            {
-                _toDos[index] = toDo;
-            }
+            var existingToDo = await _db.ToDo.FindAsync(id);
+            if (existingToDo == null) return false;
+
+            existingToDo.Title = toDo.Title;
+            existingToDo.IsCompleted = toDo.IsCompleted;
+
+            await _db.SaveChangesAsync();
+            return true;
         }
 
         //D of CRUD
-        public void Delete(int id) => _toDos.RemoveAll(t => t.Id == id);
+        public async Task<bool> Delete(int id)
+        {
+            var toDo = await _db.ToDo.FindAsync(id);
+            if (toDo == null) 
+                return false;
+
+            _db.ToDo.Remove(toDo);
+            await _db.SaveChangesAsync();
+            return true;
+        }
 
     }
 }
