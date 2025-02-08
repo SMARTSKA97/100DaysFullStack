@@ -1,9 +1,9 @@
 # 🚀 100-Day Full-Stack Challenge Progress  
-**Total XP**: 300/1000  
-**Current Level**: Level 1 (0-500 XP) → **Next Level**: 200 XP to go!  
+**Total XP**: 400/1000  
+**Current Level**: Level 1 (0-500 XP) → **Next Level**: 100 XP to go!  
 
 ### 📊 Progress Bar  
-`■■■■■■□□□□ 60%` (Level 1: 300/500 XP)  
+`■■■■■■■□□□ 80%` (Level 1: 400/500 XP)  
 
 ---
 
@@ -15,6 +15,7 @@
 | 🛠️ CRUD Master      | Day 2      |  
 | 🎯 Architectural Pro | Day 2      |  
 | 🗄️ Database Guru    | Day 3      |  
+| 🛡️ Validation Champion | Day 4     |  
 
 ---
 
@@ -24,10 +25,4 @@
 | 1   | Hello World API               | 50  | 🔥, 🎉                        |  
 | 2   | Todo CRUD API                 | 100 | 🛠️, 🎯                       |  
 | 3   | PostgreSQL + EF Core          | 150 | 🗄️                          |  
-
----
-
-### 🎮 **Rules**  
-- **Level Up**: Every **500 XP** unlocks a new level.  
-- **Progress Bar**: Updates automatically with XP.  
-- **Badges**: Awarded for key milestones.  
+| 4   | Validation & Error Handling   | 100 | 🛡️                          |  
