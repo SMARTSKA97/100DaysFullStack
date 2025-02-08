@@ -22,7 +22,11 @@ namespace HelloWorldApi.Services
         public async Task<List<ToDo>>RetrieveAll() => await _db.ToDo.ToListAsync();
 
         //This will retrieve by ID
-       public async Task<ToDo?> RetrieveByIdAsync(int id) => await _db.ToDo.FindAsync(id);
+       public async Task<ToDo?> RetrieveById(int id)
+        {
+                return await _db.ToDo.FindAsync(id);
+        }
+
 
         //U of CRUD
         public async Task<bool> Update(int  id, ToDo toDo)

@@ -15,6 +15,10 @@ namespace HelloWorldApi.Controllers
         [HttpPost]
         public IActionResult CreateToDo(ToDo toDo, ToDoService? _toDoService)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Errors = ModelState.Values.SelectMany(v => v.Errors)});
+            }
             _toDoService?.Create(toDo);
             return CreatedAtAction(nameof(RetrieveTodos), toDo);
         }
@@ -26,18 +30,45 @@ namespace HelloWorldApi.Controllers
             return Ok(todos);
         }
 
+        [HttpGet("id")]
+        public async Task<IActionResult> RetrieveTodosById(int id)
+        {
+            var todos = await _toDoService.RetrieveById(id);
+            if(todos == null)
+            {
+                return NotFound(new { Message = "Todo Not Found" });
+            }
+            return Ok(todos);
+        }
+
 
         [HttpPut("id")]
-        public IActionResult UpdateTodo(int id, ToDo toDo)
+        public async Task<IActionResult> UpdateTodo(int id, ToDo toDo)
         {
-            _toDoService?.Update(id, toDo);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Errors = ModelState.Values.SelectMany(v => v.Errors) });
+            }
+            var update = await _toDoService?.Update(id, toDo);
+            if (!update)
+            {
+                return NotFound(new { Message = "Item not found" });
+            }
             return NoContent();
         }
 
         [HttpDelete("id")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _toDoService?.Delete(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Errors = ModelState.Values.SelectMany(v => v.Errors) });
+            }
+           var update = await _toDoService?.Delete(id);
+            if (!update)
+            {
+                return NotFound(new { Message = "Item Not Found" });
+            }
             return NoContent();
         }
 
