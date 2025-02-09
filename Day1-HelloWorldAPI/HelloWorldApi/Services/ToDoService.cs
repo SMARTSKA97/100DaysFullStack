@@ -1,5 +1,6 @@
 ﻿using HelloWorldApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace HelloWorldApi.Services
 {
@@ -15,6 +16,7 @@ namespace HelloWorldApi.Services
         {
             _db.ToDo.Add(toDo);
             await _db.SaveChangesAsync();
+            Log.Information("Product added successfully: {@ToDo}", toDo);
         }
 
         //R of CRUD

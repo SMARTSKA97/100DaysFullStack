@@ -1,6 +1,7 @@
 ﻿using HelloWorldApi.Models;
 using HelloWorldApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace HelloWorldApi.Controllers
 {
@@ -15,8 +16,10 @@ namespace HelloWorldApi.Controllers
         [HttpPost]
         public IActionResult CreateToDo(ToDo toDo, ToDoService? _toDoService)
         {
+            Log.Information("Creating ToDo");
             if (!ModelState.IsValid)
             {
+                Log.Warning("Todo Failed", ModelState);
                 return BadRequest(new { Errors = ModelState.Values.SelectMany(v => v.Errors)});
             }
             _toDoService?.Create(toDo);
@@ -26,6 +29,7 @@ namespace HelloWorldApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ToDo>>> RetrieveTodos()
         {
+            Log.Information("Fetching All ToDos");
             var todos = await _toDoService.RetrieveAll();
             return Ok(todos);
         }
@@ -33,11 +37,14 @@ namespace HelloWorldApi.Controllers
         [HttpGet("id")]
         public async Task<IActionResult> RetrieveTodosById(int id)
         {
+            Log.Information("Fetching ToDo by {@id}", id);
             var todos = await _toDoService.RetrieveById(id);
             if(todos == null)
             {
+                Log.Warning("ToDo not available.");
                 return NotFound(new { Message = "Todo Not Found" });
             }
+            Log.Information("Fetched {@id} successfully",id);
             return Ok(todos);
         }
 
@@ -47,13 +54,16 @@ namespace HelloWorldApi.Controllers
         {
             if (!ModelState.IsValid)
             {
+                Log.Warning("Update failed due to ", ModelState);
                 return BadRequest(new { Errors = ModelState.Values.SelectMany(v => v.Errors) });
             }
             var update = await _toDoService?.Update(id, toDo);
             if (!update)
             {
-                return NotFound(new { Message = "Item not found" });
+                Log.Warning("Sorry, failed updating ToDo");
+                return NotFound(new { Message = "Todo not found" });
             }
+            Log.Information("ToDo Updated successfully ", update);
             return NoContent();
         }
 
@@ -62,13 +72,16 @@ namespace HelloWorldApi.Controllers
         {
             if (!ModelState.IsValid)
             {
+                Log.Warning("Update failed due to ", ModelState);
                 return BadRequest(new { Errors = ModelState.Values.SelectMany(v => v.Errors) });
             }
            var update = await _toDoService?.Delete(id);
             if (!update)
             {
-                return NotFound(new { Message = "Item Not Found" });
+                Log.Warning("Sorry, failed deleting ToDo");
+                return NotFound(new { Message = "Todo Not Found" });
             }
+            Log.Information("ToDo deleted successfully", update);
             return NoContent();
         }
 
