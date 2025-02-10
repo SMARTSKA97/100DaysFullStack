@@ -1,14 +1,35 @@
+using System.Text;
 using HelloWorldApi.Models;
 using HelloWorldApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.PostgreSQL;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("Default");
+
+//Add JWT Stuffs
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+{
+    option.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "SKA97",
+        ValidAudience = "Users",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(""))
+    };
+});
+
+builder.Services.AddAuthorization();
 
 //Add Serilog stuffs
+var connectionString = builder.Configuration.GetConnectionString("Default");
+
 var columnWriters = new Dictionary<string, ColumnWriterBase>
 {
     {"timestamp", new TimestampColumnWriter() },
@@ -34,6 +55,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(); // Explicitly add Swagger
 
 var app = builder.Build();
+
+//Enabling JWT
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
