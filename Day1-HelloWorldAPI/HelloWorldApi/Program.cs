@@ -11,21 +11,21 @@ using Serilog.Sinks.PostgreSQL;
 var builder = WebApplication.CreateBuilder(args);
 
 //Add JWT Stuffs
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
-    option.TokenValidationParameters = new TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "SKA97",
-        ValidAudience = "Users",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(""))
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
 
-builder.Services.AddAuthorization();
 
 //Add Serilog stuffs
 var connectionString = builder.Configuration.GetConnectionString("Default");
@@ -55,10 +55,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(); // Explicitly add Swagger
 
 var app = builder.Build();
-
-//Enabling JWT
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
