@@ -1,5 +1,6 @@
 ﻿using HelloWorldApi.Models;
 using HelloWorldApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -7,6 +8,7 @@ namespace HelloWorldApi.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
+    [Authorize]
     public class ToDoController : ControllerBase
     {
         private readonly ToDoService? _toDoService;
